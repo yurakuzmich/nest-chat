@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Chat App</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+      }
+
+      body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .login-form {
+        width: 500px;
+        border: 1px solid gray;
+        border-radius: 15px;
+        padding: 20px;
+      }
+
+      input, button {
+        border-radius: 5px;
+        line-height: 1.3rem;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="login-form">
+      <form method="post" action="/auth/login" id="login-form">
+        <input type="text" name="email" placeholder="Login" id="email-input">
+        <input type="password" name="pass" placeholder="Password" id="password-input">
+        <button type="submit" >Login</button>
+      </form>
+      <a href="auth/register">Register</a>
+    </div>
+
+    <script>
+      const form = document.getElementById('login-form');
+      const emailInput = document.getElementById('email-input');
+      const passwordInput = document.getElementById('password-input');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const postData = {
+          email: emailInput.value,
+          pass: passwordInput.value,
+        }
+
+        console.log(postData);
+
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData),
+        }
+
+        try {
+          const response = await fetch('/auth/login', requestOptions);
+          const data = await response.json();
+
+          if (data.access_token) {
+            localStorage.setItem('chatAuthToken', data.access_token)
+            emailInput.value = '';
+            passwordInput.value = '';
+            console.log(data.access_token);
+
+            window.location.href = '/chat';
+          } else {
+            console.error('Failed to login:');
+          }
+        } catch (error) {
+          console.error('Error:', error.message);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -9,11 +9,21 @@ export class ChatService {
     console.log('ChatService');
   }
 
-  saveMessage(message: Partial<Message>) {
-    return this.messageModel.create(message);
+  async saveMessage(message: Partial<Message>) {
+    try {
+      const result = await this.messageModel.create(message);
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  getMessages() {
-    return this.messageModel.find();
+  async getMessages() {
+    try {
+      const messages = await this.messageModel.find();
+      return messages;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

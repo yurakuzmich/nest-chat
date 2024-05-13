@@ -5,6 +5,10 @@ import { Server, Socket } from 'socket.io'; // or any other WebSocket library
 export class AppGateway {
   @WebSocketServer() server: Server;
 
+  constructor() {
+    console.log('AppGateway Initialized');
+  }
+
   handleConnection(client: any, ...args: any[]) {
     console.log('Client connected');
   }

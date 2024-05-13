@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request, Response, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from './auth/auth.guard';
 
@@ -7,14 +7,14 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Response() response) {
+    console.log('GET / Redirecting to login');
+    response.redirect('/login');
   }
 
-  @UseGuards(AuthGuard)
-  @Get('test-auth')
-  testAuth(@Request() request) {
-    return request.user;
+  @Get('login')
+  @Render('login')
+  login() {
+    return;
   }
-
 }

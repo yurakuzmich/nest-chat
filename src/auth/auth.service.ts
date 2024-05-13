@@ -12,7 +12,13 @@ export class AuthService {
 
   async signIn(email: string, pass: string): Promise<any> {
     
+    console.log('email', email);
+    console.log('pass', pass);
     const user = await this.usersService.getUser(email);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
 
     const result = await bcrypt.compare(pass, user.password);
 

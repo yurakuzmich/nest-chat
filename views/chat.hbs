@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Socket.IO chat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+      }
+
+      #chat-form {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 2px solid gray;
+        border-radius: 10px;
+        padding: 15px;
+      }
+
+      .messages {
+        width: 90%;
+        margin: 0 auto;
+        border: 1px solid grey;
+      }
+
+      .logout-button {
+        position: absolute;
+        right: 30px;
+        bottom: 20px;
+        display: block;
+        width: 50px;
+        height: 50px;
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div class="messages"></div>
+    <form method="post" action="/chat" id="chat-form">
+        <input type="text" placeholder="Type message here" id="input">
+        <button type="submit">Send</button>
+    </form>
+
+    <a href="/auth/logout" class="logout-button">>></a>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+      const username = '{{ username }}';
+      const socket = io();
+
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('input');
+      const messages = document.querySelector('.messages');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (input.value) {
+          const postData = {
+            text: input.value,
+            user: username
+          }
+
+          const requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXVyYWt1em1pY2giLCJlbWFpbCI6Inl1cmFrdXptaWNoQGdtYWlsLmNvbSIsImlhdCI6MTcxNTU4NDI3NywiZXhwIjoxNzE1NjcwNjc3fQ.r5C9oFhc8gAl8LAkIaGuS26_27xzoiPUX8FyG4UZrkA',
+            },
+            body: JSON.stringify(postData),
+          }
+
+          try {
+            const response = await fetch('/chat', requestOptions);
+            if (response.ok) {
+              console.log('Message sent successfully');
+              // Reset the input field after successful submission
+              input.value = '';
+            } else {
+              console.error('Failed to send message:', response.statusText);
+            }
+          } catch (error) {
+            console.error('Error:', error.message);
+          }
+
+          {{!-- const result = await fetch(''); --}}
+          {{!-- socket.emit('message', input.value);
+          input.value = ''; --}}
+        }
+      });
+
+      socket.on('message', (msg) => {
+        const item = document.createElement('p');
+        const message = JSON.parse(msg);
+        item.innerHTML = `<b>${message.user} at ${message.time}:</b> ${message.text}`;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
