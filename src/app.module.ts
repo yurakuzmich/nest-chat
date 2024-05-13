@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { AppGateway } from './app.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -12,8 +14,9 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.DB_CONNECTION_STRING),
+    ChatModule,
   ],
   controllers: [AppController],
-   providers: [AppService],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}
